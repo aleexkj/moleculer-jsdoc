@@ -1,0 +1,28 @@
+{
+  "name": "moleculer-jsdoc",
+  "version": "0.0.0",
+  "description": "Docs generator for moleculer services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleexkj/moleculer-jsdoc.git"
+  },
+  "keywords": [
+    "jsdoc",
+    "moleculer"
+  ],
+  "author": "aleexkj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aleexkj/moleculer-jsdoc/issues"
+  },
+  "homepage": "https://github.com/aleexkj/moleculer-jsdoc#readme",
+  "dependencies": {
+    "handlebars": "^4.7.6",
+    "handlebars-helpers": "^0.10.0",
+    "jsdoc-api": "^5.0.4"
+  }
+}

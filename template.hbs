@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <title> {{title}} </title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="icon" href="{{icon}}" sizes="192x192">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.2/styles/default.min.css">
+    <style>
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: searchfield-cancel-button;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .header {
+            background: #ffffff;
+            padding: 15px;
+            margin: 0px;
+            margin-bottom: 10px;
+        }
+
+        .navbar-title {
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .wrap {
+            margin: 0
+        }
+
+        .sidemenu {
+            padding: 0px;
+            background: #f8f8f8;
+            height: 100%;
+            color: #333;
+        }
+
+        .content {
+            padding-left: 50px;
+            padding-top: 30px;
+            background: white;
+        }
+
+        .search {
+            margin: 0 0 1rem 0;
+            width: 90%;
+        }
+
+        .menu {
+            padding: 0;
+            margin-left: 13px;
+        }
+
+        a.namespace {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #f53135;
+            margin-left: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .menu li {
+            list-style: none;
+        }
+
+        .menu li ul {
+            padding: 0;
+            margin-left: .5rem;
+        }
+
+        .menu li a {
+            display: block;
+            padding: .25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+        }
+
+        .menu li a.file {
+            color: #061a75;
+        }
+
+        .menu li.method-group > a {
+            font-weight: bold;
+        }
+
+        h1.ns {
+            margin-bottom: 10px;
+        }
+
+        h2.file {
+            margin-top: 30px;
+            color: #d44a1e;
+        }
+
+        .method {
+            margin: 0 0 1.5rem 0;
+        }
+
+        .method section,
+        section.property {
+            margin: 2rem 0;
+        }
+
+        .method .table,
+        .method .table p,
+        .method .table ol,
+        .method .table ul {
+            margin: 0;
+        }
+
+        .permalink {
+            position: absolute;
+            margin-left: -1em;
+            font-weight: normal;
+            color: #eee;
+            text-decoration: none;
+        }
+
+        .permalink:hover {
+            color: #E54D89;
+        }
+
+        .a-target {
+            height: 10px;
+        }
+
+        .bs-footer {
+            margin: 3rem auto;
+            color: #777;
+            text-align: center;
+        }
+
+        .sidemenu {
+            max-height: 100%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="wrap">
+    <div class="col-2 position-fixed sidemenu">
+        <div class="row header sticky-top">
+            <div class="col-12">
+                <div class="row align-items-center">
+                    <a class="navbar-brand" href="#">
+                        <img alt="Lok" src="{{icon}}"/>
+                    </a>
+                    <span class="navbar-title">{{title}}</span>
+                    {{#if version}}
+                    <span class="badge badge-secondary ml-2">{{version}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="col-12 mt-2 p-0">
+                <input type="search" class="form-control m-0 search" id="search-methods" placeholder="Search..."
+                       autocomplete="off">
+            </div>
+        </div>
+
+        {{#each ns}}
+        <a href="#{{name}}" class="namespace">{{uppercase name}}</a>
+        <ul class="menu">
+            {{#each members}}
+            <li>
+                <a href="#{{longname}}" class="file"><b>{{name}}</b></a>
+                {{#with this as |file|}}
+                {{#each file.children}}
+                <ul>
+                    <li class="method-group">
+                        <a href="#{{file.longname}}.{{@key}}">{{@key}}</a>
+                        {{#unless this.__final}}
+                        <ul>
+                            {{#each this}}
+                            <li>
+                                <a href="#{{longname}}">
+                                    {{@key}}
+                                </a>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        {{/unless}}
+                    </li>
+                </ul>
+                {{/each}}
+                {{/with}}
+            </li>
+            {{/each}}
+        </ul>
+        {{/each}}
+    </div>
+
+    <div class="offset-2 col-10 content" id="#">
+        {{#each ns }}
+        <div id="{{name}}" class="a-target"></div>
+        <h1 class="ns">{{capitalize name}}</h1>
+
+        {{#each members}}
+        <h2 class="file" id="{{longname}}">
+            {{name}}
+            {{#if filename}}
+            <small class="text-muted">({{filename}})</small>
+            {{/if}}
+        </h2>
+
+        <p>{{{description}}}</p>
+
+        {{#if augments}}
+        <p>
+            <strong>Extends: </strong>
+            {{{augments}}}
+        </p>
+        {{/if}}
+
+        {{#if properties}}
+        <section class="property">
+            <h5>Properties</h5>
+            <div class="table-responsive col-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each properties}}
+                    <tr>
+                        <td>
+                            {{name}}
+                            {{#if optional}}
+                            <span class="badge badge-secondary">
+                                optional
+                            </span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{{types}}}
+                        </td>
+                        <td>
+                            {{defaultvalue}}
+                        </td>
+                        <td>{{{markdown description}}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if class}}
+        <section class="property">
+            <h5>constructor</h5>
+            {{#if params.length}}
+            <div class="table-responsive col-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {{#each params}}
+                    <tr>
+                        <td>
+                            {{name}}
+                            {{#if optional}}
+                            <span class="badge badge-secondary">
+                                        optional
+                                        </span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{{types}}}
+                        </td>
+                        <td>
+                            {{{defaultvalue}}}
+                        </td>
+                        <td>{{{description}}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            {{/if}}
+        </section>
+        {{/if}}
+
+        {{#with this as |file|}}
+        {{#each file.children}}
+        <p class="h5 mt-3" id="{{file.longname}}.{{@key}}">
+            <strong>{{uppercase @key}}</strong>
+        </p>
+
+        {{#if type}}
+        <p><strong>Type: </strong> {{{type}}}</p>
+        {{/if}}
+
+        {{#if augments.length}}
+        <p>
+            <strong>Extends: </strong>
+            <ul>
+            {{#each augments}}
+            <li>{{{.}}}</li>
+            {{/each}}
+            </ul>
+        </p>
+        {{/if}}
+
+
+        {{#if description}}
+        <div class="col-6 p-0">{{{description}}}</div>
+        {{/if}}
+
+        {{#if properties}}
+        <section class="property">
+            <h5>Properties</h5>
+            <div class="table-responsive col-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each properties}}
+                    <tr>
+                        <td>
+                            {{name}}
+                            {{#if optional}}
+                            <span class="badge badge-secondary">
+                                optional
+                            </span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{{types}}}
+                        </td>
+                        <td>
+                            {{defaultvalue}}
+                        </td>
+                        <td>{{{description}}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if members}}
+        <section class="property">
+            <h5>Members</h5>
+            <div class="table-responsive col-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each members}}
+                    <tr>
+                        <td>
+                            {{name}}
+                        </td>
+                        <td>{{{description}}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if mixes}}
+        <ul>
+            {{#each mixes}}
+            <li> {{{this}}} </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if listens.length}}
+        Listens to:
+        <ul>
+            {{#each listens}}
+            <li>
+                {{{name}}}
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#unless this.__final}}
+        <!-- Nested methods -->
+        {{#each this}}
+        <div class="method">
+            <div id="{{longname}}" class="a-target"></div>
+            <h4>
+                <span class="permalink">#</span>
+                {{name}}
+                <small>
+                {{#each badges}}
+                {{{this}}}
+                {{/each}}
+                </small>
+            </h4>
+
+            <p class="description">
+                {{{description}}}
+            </p>
+
+            {{#if fires.length}}
+            <p>
+                <strong>Emits:</strong>
+                <ul>
+                {{#each fires}}
+                <li>
+                    {{{.}}}
+                </li>
+                {{/each}}
+                </ul>
+            </p>
+            {{/if}}
+
+            <div class="row">
+                <div class="col-6">
+                    {{#if params.length}}
+                    <section class="parameters">
+                        <h5>Parameters</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {{#each params}}
+                                <tr>
+                                    <td>
+                                        {{name}}
+                                        {{#if optional}}
+                                        <span class="badge badge-secondary">
+                                        optional
+                                        </span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{{types}}}
+                                    </td>
+                                    <td>
+                                        {{{defaultvalue}}}
+                                    </td>
+                                    <td>{{{description}}}</td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+
+                    {{#if returns.length}}
+                    <section class="returns">
+                        <h5>Returns</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#each returns}}
+                                <tr>
+                                    <td>
+                                        {{{types}}}
+                                    </td>
+                                    <td>{{{description}}}</td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+
+                    {{#if exceptions.length}}
+                    <section class="parameters">
+                        <h5>Exceptions</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {{#each exceptions}}
+                                <tr>
+                                    <td>
+                                        {{{name}}}
+                                    </td>
+                                    <td>{{{description}}}</td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+                </div>
+                <div class="col-6">
+                    {{#if examples}}
+                    <section class="examples">
+                        <h5>Examples</h5>
+                        {{#each examples}}
+                        <pre><code class="language-js">{{{this}}}</code></pre>
+                        {{/each}}
+                    </section>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        {{/unless}}
+        <!--  close member descriptor  -->
+        {{/each}}
+        <!--  close file descriptor -->
+        {{/with}}
+        {{/each}}
+        <!--  close namespace  -->
+        {{/each}}
+    </div>
+</div>
+
+<footer class="bs-footer">
+    <div class="container">
+        <p>Documentation generated with moleculer-jsdoc.</p>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    (function () {
+        'use strict';
+
+        var $searchInput = $('#search-methods');
+        var $methodLinks = $('.method-link');
+        var $methodNames = $('.method .method-name');
+
+        var urlQuery = window.location.search.match(/q=([^&]+)/);
+
+        $searchInput.on('keyup', function (e) {
+            var query = new RegExp(e.target.value.replace(' ', '|'), 'ig');
+
+            $methodLinks.each(function () {
+                var $this = $(this);
+
+                if (!$this.text().match(query)) {
+                    $this.hide();
+                } else {
+                    $this.show();
+                }
+            });
+
+            $methodNames.each(function () {
+                var $this = $(this);
+
+                if (!$this.text().match(query)) {
+                    $this.closest('.method').hide();
+                } else {
+                    $this.closest('.method').show();
+                }
+            });
+
+            window.history.replaceState({}, '', window.location.pathname + '?q=' + e.target.value);
+        });
+
+        $searchInput.on('search', function () {
+            $searchInput.trigger('keyup');
+        });
+
+        if (urlQuery && urlQuery.length > 1) {
+            $searchInput.val(urlQuery[1]).trigger('keyup');
+        }
+
+        hljs.initHighlightingOnLoad();
+    })();
+</script>
+</body>
+</html>
