@@ -282,8 +282,11 @@ doc.title = package.name;
 doc.description = package.description;
 doc.version = package.version;
 
-const template = fs.readFileSync('./template.hbs').toString();
-const settings = require('./.jsdoc.config.js');
+const path = require('path');
+const templatePath = path.resolve(__dirname, 'template.hbs');
+const configPath = path.resolve(process.cwd(), '.jsdoc.config.js');
+const template = fs.readFileSync(templatePath).toString();
+const settings = require(configPath);
 
 // template settings
 doc.icon = settings.icon;
