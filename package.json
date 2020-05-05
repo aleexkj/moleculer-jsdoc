@@ -1,6 +1,6 @@
 {
   "name": "moleculer-jsdoc",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Docs generator for moleculer services",
   "main": "index.js",
   "scripts": {
