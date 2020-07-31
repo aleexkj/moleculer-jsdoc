@@ -213,8 +213,6 @@ for (const name of namespaces) {
             ? JSON.parse(token.meta.code.value)
             : {};
 
-        console.log(token)
-
         token.properties.forEach(property => {
           property.types = resolveType(property.type.names, external, value);
           if (value[property.name]) {
@@ -253,7 +251,7 @@ for (const name of namespaces) {
 
       if (token.fires) {
         token.fires = token.fires.map(e => {
-          return external[e];
+          return external[e] || e;
         })
       }
 
