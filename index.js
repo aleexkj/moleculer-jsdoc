@@ -1,13 +1,14 @@
 const jsdoc = require('jsdoc-api');
 const handlebars = require('handlebars');
 const helpers = require('handlebars-helpers')();
+const Filter = require("handlebars.filter");
 const fs = require('fs');
 
-handlebars.registerHelper('markdown', helpers.markdown);
 handlebars.registerHelper('capitalize', helpers.capitalize);
 handlebars.registerHelper('default', helpers.default);
 handlebars.registerHelper('uppercase', helpers.uppercase);
 handlebars.registerHelper('trimLeft', helpers.trimLeft);
+Filter.registerHelper(handlebars);
 
 function hasTag(item, tagName) {
   if (item.tags) {
@@ -30,6 +31,10 @@ function resolveBadges(item) {
 
   if (item.async) {
     res.push('<span class="badge badge-info">async</span>');
+  }
+
+  if (hasTag(item, 'retryable')) {
+    res.push('<span class="badge badge-warning">retry</span>');
   }
 
   if (!item.access || item.access == 'public') {
@@ -70,6 +75,7 @@ function setProperty(obj, path, item) {
     const [parent, member] = name.split('~');
     innerProperty[parent].members = innerProperty[parent].members || {};
     innerProperty[parent].members[member] = item;
+    innerProperty[parent].__final = false;
   } else {
     innerProperty[name] = item;
   }
@@ -92,7 +98,7 @@ function resolveType(types, ref) {
         const re = new RegExp(`<?(${keys})>?`);
         const matching = name.match(re);
 
-        if (!matching) {
+        if (!matching || keys.length < 1) {
           return `<code>${name}</code>`;
         }
 
@@ -101,6 +107,7 @@ function resolveType(types, ref) {
 
         return `<code>${link}</code>`;
       });
+
   return pre.join(',');
 }
 
@@ -130,7 +137,8 @@ const definitions = tokens.filter(t => t.kind === 'typedef')
       if (token.augments) {
         token.augments = resolveType(token.augments, external);
       }
-        return token;
+
+      return token;
     });
 const events = tokens.filter(t => t.kind === 'event')
     .map(token => {
@@ -172,16 +180,25 @@ for (const name of namespaces) {
       }
 
       prefix = token.longname;
-      moduleDef = {
-        description:  token.description,
-        name: token.name,
-        longname: token.longname,
-        filename: token.meta.filename,
-        children: {}
+      token.children = {
+        // description:  token.description,
+        // name: token.name,
+        // longname: token.longname,
+        // filename: token.meta.filename,
+        // children: {}
       };
-    } else {
+      moduleDef = token;
+    }
       const regex = new RegExp(`${prefix}.?`);
-      const member = token.longname.replace(regex, '');
+      const name = token.name.replace(/["\.]/g, '');
+      const member = token.longname.replace(regex, '')
+          .replace(token.name, name);
+
+      token.name = token.name.replace(/"/g, '');
+
+      if (token.access === 'private') {
+        continue;
+      }
 
       if (token.mixes) {
         replaceExternal(token.mixes, external);
@@ -192,8 +209,20 @@ for (const name of namespaces) {
       }
 
       if (token.properties) {
+        const value = token.meta.code.value
+            ? JSON.parse(token.meta.code.value)
+            : {};
+
+        console.log(token)
+
         token.properties.forEach(property => {
-          property.types = resolveType(property.type.names, external);
+          property.types = resolveType(property.type.names, external, value);
+          if (value[property.name]) {
+           property.defaultvalue = `${value[property.name]}`;
+          }
+          if (typeof property.defaultvalue !== 'undefined') {
+            property.defaultvalue = String(property.defaultvalue);
+          }
         })
       }
 
@@ -209,7 +238,7 @@ for (const name of namespaces) {
         });
       }
 
-      if (token.kind === 'function') {
+      if (member.startsWith('actions')) {
         token.badges = resolveBadges(token);
       }
 
@@ -248,12 +277,13 @@ for (const name of namespaces) {
       }
 
       token.__final = true;
-      if (!moduleDef) {
+
+      if (token.kind !== 'module' && !moduleDef) {
         members.push(token);
-      } else {
+      } else if (token.kind !== 'module') {
         setProperty(moduleDef.children, member, token);
       }
-    }
+
   }
 
   if (moduleDef !== null) {

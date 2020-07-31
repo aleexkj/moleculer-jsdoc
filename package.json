@@ -23,6 +23,7 @@
   "dependencies": {
     "handlebars": "^4.7.6",
     "handlebars-helpers": "^0.10.0",
+    "handlebars.filter": "^1.0.1",
     "jsdoc-api": "^5.0.4"
   }
 }

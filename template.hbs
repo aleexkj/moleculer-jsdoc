@@ -183,7 +183,7 @@
                             {{#each this}}
                             <li>
                                 <a href="#{{longname}}">
-                                    {{@key}}
+                                    {{name}}
                                 </a>
                             </li>
                             {{/each}}
@@ -207,12 +207,12 @@
         {{#each members}}
         <h2 class="file" id="{{longname}}">
             {{name}}
-            {{#if filename}}
-            <small class="text-muted">({{filename}})</small>
+            {{#if meta.filename}}
+            <small class="text-muted">({{meta.filename}})</small>
             {{/if}}
         </h2>
 
-        <p>{{{description}}}</p>
+        {{{filter description "markdown"}}}
 
         {{#if augments}}
         <p>
@@ -224,7 +224,7 @@
         {{#if properties}}
         <section class="property">
             <h5>Properties</h5>
-            <div class="table-responsive col-6">
+            <div class="table-responsive col-9">
                 <table class="table">
                     <thead>
                     <tr>
@@ -249,14 +249,26 @@
                             {{{types}}}
                         </td>
                         <td>
-                            {{defaultvalue}}
+                            {{{filter defaultvalue "markdown"}}}
                         </td>
-                        <td>{{{markdown description}}}</td>
+                        <td>
+                           {{{filter description "markdown"}}}
+                        </td>
                     </tr>
                     {{/each}}
                     </tbody>
                 </table>
             </div>
+            {{#if examples}}
+                <div class="col-6">
+                    <section class="examples">
+                        <h5>Examples</h5>
+                        {{#each examples}}
+                        <pre><code class="language-js">{{{this}}}</code></pre>
+                        {{/each}}
+                    </section>
+                </div>
+            {{/if}}
         </section>
         {{/if}}
 
@@ -290,8 +302,10 @@
                             {{{types}}}
                         </td>
                         <td>
-                            {{{defaultvalue}}}
-                        </td>
+                            <pre>
+                            {{{filter defaultvalue "markdown"}}}
+                            </pre>
+                          </td>
                         <td>{{{description}}}</td>
                     </tr>
                     {{/each}}
@@ -323,21 +337,21 @@
         </p>
         {{/if}}
 
-
         {{#if description}}
-        <div class="col-6 p-0">{{{description}}}</div>
+        <div class="col-6 p-0">
+            {{{filter description "markdown"}}}
+        </div>
         {{/if}}
 
         {{#if properties}}
         <section class="property">
-            <h5>Properties</h5>
-            <div class="table-responsive col-6">
+            <div class="table-responsive col-9">
                 <table class="table">
                     <thead>
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>Default</th>
+                        <th>Value</th>
                         <th>Description</th>
                     </tr>
                     </thead>
@@ -356,7 +370,9 @@
                             {{{types}}}
                         </td>
                         <td>
-                            {{defaultvalue}}
+                            <pre>
+                            {{{filter defaultvalue "markdown"}}}
+                            </pre>
                         </td>
                         <td>{{{description}}}</td>
                     </tr>
@@ -427,9 +443,9 @@
                 </small>
             </h4>
 
-            <p class="description">
-                {{{description}}}
-            </p>
+            <div class="description col-9">
+               {{{filter description "markdown"}}}
+            </div>
 
             {{#if fires.length}}
             <p>
@@ -445,7 +461,34 @@
             {{/if}}
 
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
+                    {{#if members}}
+                    <section class="mt-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                 <tbody>
+                                 {{#each members}}
+                                 <tr>
+                                     <td>
+                                        {{name}}
+                                    </td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
+                                 </tr>
+                                 {{/each}}
+                                 </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+
                     {{#if params.length}}
                     <section class="parameters">
                         <h5>Parameters</h5>
@@ -475,9 +518,15 @@
                                         {{{types}}}
                                     </td>
                                     <td>
-                                        {{{defaultvalue}}}
+                                        {{#if defaultvalue}}
+                                       <pre>
+                                            {{{filter defaultvalue "markdown"}}}
+                                       </pre>
+                                        {{/if}}
                                     </td>
-                                    <td>{{{description}}}</td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
                                 </tr>
                                 {{/each}}
                                 </tbody>
@@ -503,7 +552,9 @@
                                     <td>
                                         {{{types}}}
                                     </td>
-                                    <td>{{{description}}}</td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
                                 </tr>
                                 {{/each}}
                                 </tbody>
@@ -530,7 +581,9 @@
                                     <td>
                                         {{{name}}}
                                     </td>
-                                    <td>{{{description}}}</td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
                                 </tr>
                                 {{/each}}
                                 </tbody>
