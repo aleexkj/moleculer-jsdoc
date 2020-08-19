@@ -385,27 +385,89 @@
 
         {{#if members}}
         <section class="property">
-            <h5>Members</h5>
-            <div class="table-responsive col-6">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{#each members}}
-                    <tr>
-                        <td>
-                            {{name}}
-                        </td>
-                        <td>{{{description}}}</td>
-                    </tr>
-                    {{/each}}
-                    </tbody>
-                </table>
+            {{#each members}}
+                <div id="{{longname}}" class="a-target"></div>
+                <h4>
+                    <span class="permalink">#</span>
+                    {{name}}
+                </h4>
+            <div class="description col-9">
+               {{{filter description "markdown"}}}
             </div>
+                 {{#if params.length}}
+                    <section class="parameters">
+                        <h5>Parameters</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {{#each params}}
+                                <tr>
+                                    <td>
+                                        {{name}}
+                                        {{#if optional}}
+                                        <span class="badge badge-secondary">
+                                        optional
+                                        </span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{{types}}}
+                                    </td>
+                                    <td>
+                                        {{#if defaultvalue}}
+                                       <pre>
+                                            {{{filter defaultvalue "markdown"}}}
+                                       </pre>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+
+                    {{#if returns.length}}
+                    <section class="returns">
+                        <h5>Returns</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#each returns}}
+                                <tr>
+                                    <td>
+                                        {{{types}}}
+                                    </td>
+                                    <td>
+                                        {{{filter description "markdown"}}}
+                                    </td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {{/if}}
+            {{/each}}
         </section>
         {{/if}}
 

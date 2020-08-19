@@ -3,6 +3,7 @@ const handlebars = require('handlebars');
 const helpers = require('handlebars-helpers')();
 const Filter = require("handlebars.filter");
 const fs = require('fs');
+const path = require('path');
 
 handlebars.registerHelper('capitalize', helpers.capitalize);
 handlebars.registerHelper('default', helpers.default);
@@ -111,9 +112,10 @@ function resolveType(types, ref) {
   return pre.join(',');
 }
 
-
+const configPath = path.resolve(process.cwd(), '.jsdoc.config.js');
+const settings = require(configPath);
 const tokens = jsdoc.explainSync({
-  files: 'src/*/*',
+  files: settings.files || 'src/*/*',
   package: './package.json',
   recurse: true
 }).filter(token => !token.undocumented);
@@ -310,15 +312,11 @@ doc.title = package.name;
 doc.description = package.description;
 doc.version = package.version;
 
-const path = require('path');
 const templatePath = path.resolve(__dirname, 'template.hbs');
-const configPath = path.resolve(process.cwd(), '.jsdoc.config.js');
 const template = fs.readFileSync(templatePath).toString();
-const settings = require(configPath);
 
 // template settings
 doc.icon = settings.icon;
-
 const render = handlebars.compile(template);
 
 fs.writeFileSync(settings.output, render(doc));
