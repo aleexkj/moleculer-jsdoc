@@ -114,8 +114,13 @@ function resolveType(types, ref) {
 
 const configPath = path.resolve(process.cwd(), '.jsdoc.config.js');
 const settings = require(configPath);
+console.log({
+  files: settings.files,
+  package: './package.json',
+  recurse: true
+})
 const tokens = jsdoc.explainSync({
-  files: settings.files || 'src/*/*',
+  files: settings.files,
   package: './package.json',
   recurse: true
 }).filter(token => !token.undocumented);
