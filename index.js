@@ -118,12 +118,14 @@ console.log({
   files: settings.files,
   package: './package.json',
   recurse: true
-})
+}, settings)
+
 const tokens = jsdoc.explainSync({
   files: settings.files,
   package: './package.json',
   recurse: true
 }).filter(token => !token.undocumented);
+
 const namespaces = ['services', 'errors'];
 const external = tokens.filter(item => item.kind === 'external'
     && item.see instanceof Array)
