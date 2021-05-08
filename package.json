@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/aleexkj/moleculer-jsdoc#readme",
   "dependencies": {
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "handlebars.filter": "^1.0.1",
     "jsdoc-api": "^5.0.4"
